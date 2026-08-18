@@ -1,0 +1,355 @@
+@import 'tailwindcss';
+
+/*
+  Semantic tokens live as plain CSS variables so the theme can be swapped at
+  runtime (`data-theme` on <html>) without rebuilding Tailwind. `@theme inline`
+  re-exports them as utility colours (bg-surface, text-muted, …).
+*/
+:root {
+  --c-canvas: #ffffff;
+  --c-surface: #f6f8fa;
+  --c-surface-2: #eef1f4;
+  --c-border: #d1d9e0;
+  --c-border-strong: #b6c0cb;
+  --c-text: #1f2328;
+  --c-muted: #59636e;
+  --c-faint: #818b98;
+  --c-accent: #0969da;
+  --c-accent-contrast: #ffffff;
+  --c-open: #1a7f37;
+  --c-closed: #8250df;
+  --c-not-planned: #59636e;
+  --c-danger: #cf222e;
+  --c-warn: #9a6700;
+  --c-track: #d8dee4;
+  --shadow-sheet: 0 -8px 40px rgb(31 35 40 / 18%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --c-canvas: #0b0f16;
+    --c-surface: #11161f;
+    --c-surface-2: #171d28;
+    --c-border: #242c38;
+    --c-border-strong: #38414f;
+    --c-text: #e6edf3;
+    --c-muted: #9aa7b5;
+    --c-faint: #6e7c8c;
+    --c-accent: #4493f8;
+    --c-accent-contrast: #06101c;
+    --c-open: #3fb950;
+    --c-closed: #ab7df8;
+    --c-not-planned: #8b949e;
+    --c-danger: #f85149;
+    --c-warn: #d29922;
+    --c-track: #242c38;
+    --shadow-sheet: 0 -8px 40px rgb(0 0 0 / 55%);
+  }
+}
+
+:root[data-theme='dark'] {
+  --c-canvas: #0b0f16;
+  --c-surface: #11161f;
+  --c-surface-2: #171d28;
+  --c-border: #242c38;
+  --c-border-strong: #38414f;
+  --c-text: #e6edf3;
+  --c-muted: #9aa7b5;
+  --c-faint: #6e7c8c;
+  --c-accent: #4493f8;
+  --c-accent-contrast: #06101c;
+  --c-open: #3fb950;
+  --c-closed: #ab7df8;
+  --c-not-planned: #8b949e;
+  --c-danger: #f85149;
+  --c-warn: #d29922;
+  --c-track: #242c38;
+  --shadow-sheet: 0 -8px 40px rgb(0 0 0 / 55%);
+}
+
+@theme inline {
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-line: var(--c-border);
+  --color-line-strong: var(--c-border-strong);
+  --color-ink: var(--c-text);
+  --color-muted: var(--c-muted);
+  --color-faint: var(--c-faint);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-contrast);
+  --color-open: var(--c-open);
+  --color-closed: var(--c-closed);
+  --color-notplanned: var(--c-not-planned);
+  --color-danger: var(--c-danger);
+  --color-warn: var(--c-warn);
+  --color-track: var(--c-track);
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    background-color: var(--c-canvas);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--c-canvas);
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    /* Stop iOS Safari zooming when a form field takes focus. */
+    font-size: 16px;
+    line-height: 1.5;
+    overscroll-behavior-y: none;
+  }
+
+  /* Native controls must not shrink below 16px or iOS zooms the viewport. */
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  button {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--c-accent) 35%, transparent);
+  }
+}
+
+@layer components {
+  /* Every scrollable pane keeps clear of the notch and the home indicator. */
+  .pad-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pad-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .tap {
+    min-height: 44px;
+  }
+
+  .card {
+    background-color: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 14px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding-inline: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--c-accent);
+    color: var(--c-accent-contrast);
+  }
+  .btn-secondary {
+    background-color: var(--c-surface-2);
+    color: var(--c-text);
+    border: 1px solid var(--c-border);
+  }
+  .btn-danger {
+    background-color: color-mix(in srgb, var(--c-danger) 14%, transparent);
+    color: var(--c-danger);
+    border: 1px solid color-mix(in srgb, var(--c-danger) 40%, transparent);
+  }
+
+  .field {
+    width: 100%;
+    background-color: var(--c-canvas);
+    border: 1px solid var(--c-border);
+    border-radius: 12px;
+    padding: 0.6875rem 0.875rem;
+    color: var(--c-text);
+  }
+  .field::placeholder {
+    color: var(--c-faint);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent) 25%, transparent);
+  }
+
+  .scroll-x {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scroll-x::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  .animate-in-up {
+    animation: sheet-up 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+  }
+
+  .animate-fade {
+    animation: fade 160ms ease;
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-in-up,
+    .animate-fade {
+      animation: none;
+    }
+  }
+}
+
+/* --- Rendered issue/comment bodies (GitHub-sanitised HTML) --- */
+.prose-gh {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  word-break: break-word;
+}
+.prose-gh > * + * {
+  margin-top: 0.75rem;
+}
+.prose-gh h1,
+.prose-gh h2,
+.prose-gh h3,
+.prose-gh h4 {
+  font-weight: 650;
+  line-height: 1.3;
+  margin-top: 1.25rem;
+}
+.prose-gh h1 {
+  font-size: 1.25rem;
+}
+.prose-gh h2 {
+  font-size: 1.125rem;
+}
+.prose-gh h3 {
+  font-size: 1rem;
+}
+.prose-gh a {
+  color: var(--c-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-gh code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--c-surface-2);
+  border-radius: 6px;
+  padding: 0.15em 0.35em;
+}
+.prose-gh pre {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+.prose-gh pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.8125rem;
+}
+.prose-gh ul,
+.prose-gh ol {
+  padding-left: 1.25rem;
+}
+.prose-gh ul {
+  list-style: disc;
+}
+.prose-gh ol {
+  list-style: decimal;
+}
+.prose-gh li + li {
+  margin-top: 0.25rem;
+}
+.prose-gh li input[type='checkbox'] {
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+.prose-gh ul.contains-task-list {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+.prose-gh blockquote {
+  border-left: 3px solid var(--c-border-strong);
+  padding-left: 0.75rem;
+  color: var(--c-muted);
+}
+.prose-gh img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+.prose-gh table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.prose-gh th,
+.prose-gh td {
+  border: 1px solid var(--c-border);
+  padding: 0.35rem 0.6rem;
+  text-align: left;
+}
+.prose-gh hr {
+  border: 0;
+  border-top: 1px solid var(--c-border);
+}
