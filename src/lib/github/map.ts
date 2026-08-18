@@ -58,7 +58,8 @@ export interface GqlIssueDetail extends GqlIssueCard {
   bodyHTML: string
   closedAt: string | null
   milestone: { number: number; title: string; dueOn: string | null; state: 'OPEN' | 'CLOSED' } | null
-  comments: {
+  /** Aliased in the query to avoid colliding with the fragment's `comments`. */
+  issueComments: {
     totalCount: number
     nodes?: (GqlComment | null)[] | null
   }
@@ -164,7 +165,7 @@ export function mapIssueDetail(raw: GqlIssueDetail): { issue: IssueDetail; comme
       milestone: mapMilestone(raw.milestone),
       children,
     },
-    comments: (raw.comments?.nodes ?? []).filter((c): c is GqlComment => c != null).map(mapComment),
+    comments: (raw.issueComments?.nodes ?? []).filter((c): c is GqlComment => c != null).map(mapComment),
   }
 }
 

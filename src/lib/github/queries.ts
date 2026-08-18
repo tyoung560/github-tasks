@@ -80,7 +80,10 @@ export const ISSUE_DETAIL_QUERY = /* GraphQL */ `
           dueOn
           state
         }
-        comments(first: $comments) {
+        # Aliased: the IssueCard fragment already selects comments with no
+        # arguments, and GraphQL refuses to merge two selections of one field
+        # when their arguments differ.
+        issueComments: comments(first: $comments) {
           totalCount
           nodes {
             id
@@ -160,7 +163,6 @@ export const REPO_META_QUERY = /* GraphQL */ `
       isPrivate
       hasIssuesEnabled
       pushedAt
-      viewerCanPush
       issues(states: OPEN) {
         totalCount
       }

@@ -88,6 +88,7 @@ Other scripts:
 | `npm run preview` | Serve the built app on :4173 |
 | `npm test` | Unit and component tests (Vitest) |
 | `npm run typecheck` | Types only |
+| `npm run check:graphql` | Validates every GraphQL document against GitHub's published schema (downloaded and cached under `node_modules`; set `GITHUB_GRAPHQL_SCHEMA` to a local copy to run offline) |
 | `npm run smoke` | Drives the built app in a phone-sized Chromium against canned GitHub responses, screenshots every screen into `smoke-shots/`, and fails on a console error or horizontal overflow |
 | `npm run icons` | Regenerate the PWA icon set from `scripts/generate-icons.mjs` |
 
@@ -172,6 +173,10 @@ A few decisions worth knowing about:
 - `map` — GraphQL and REST payloads into the shared model
 - `templates`, `time`, `outbox-types` — pure helpers
 - `SubIssueTree`, `Bits` — tree rendering, collapse, unlink target, label contrast
+
+The GraphQL documents are checked separately, by `npm run check:graphql` in CI.
+The smoke check cannot cover them — its fixtures answer whatever they are sent,
+so a document GitHub would reject still passes there.
 
 ## Known limits
 

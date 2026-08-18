@@ -21,6 +21,11 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Catches documents GitHub would reject, which the smoke check cannot:
+      # its fixtures answer whatever they are sent.
+      - name: Validate GraphQL against GitHub's schema
+        run: npm run check:graphql
+
       - name: Unit and component tests
         run: npm test
 
