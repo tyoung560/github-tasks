@@ -79,7 +79,9 @@ describe('mapIssueDetail', () => {
       bodyHTML: '<p><strong>hi</strong></p>',
       closedAt: null,
       milestone: { number: 2, title: 'v1', dueOn: null, state: 'OPEN' },
-      comments: {
+      // Aliased in the query so it does not collide with the fragment's own
+      // argument-free `comments` selection.
+      issueComments: {
         totalCount: 1,
         nodes: [
           {
@@ -97,6 +99,8 @@ describe('mapIssueDetail', () => {
     const { issue, comments } = mapIssueDetail(raw)
     expect(issue.milestone).toEqual({ number: 2, title: 'v1', dueOn: null, state: 'open' })
     expect(issue.body).toBe('**hi**')
+    // Count comes from the fragment's `comments`, bodies from the alias.
+    expect(issue.commentCount).toBe(2)
     expect(comments).toHaveLength(1)
     expect(comments[0].author?.login).toBe('grace')
   })

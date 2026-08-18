@@ -62,7 +62,10 @@ const issueDetail = {
     '<li><input type="checkbox" disabled> import templates</li></ul>',
   closedAt: null,
   milestone: { number: 1, title: 'v1.0', dueOn: '2026-09-01T00:00:00Z', state: 'OPEN' },
-  comments: {
+  // The query aliases the comment connection, and separately picks up an
+  // argument-free `comments { totalCount }` from the IssueCard fragment.
+  comments: { totalCount: 1 },
+  issueComments: {
     totalCount: 1,
     nodes: [
       {

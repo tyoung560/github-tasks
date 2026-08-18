@@ -39,7 +39,6 @@ export interface Page<T> {
 }
 
 export interface RepoMeta extends RepoSummary {
-  viewerCanPush: boolean
   labels: Label[]
   milestones: Milestone[]
   assignableUsers: User[]
@@ -118,7 +117,6 @@ export async function getRepoMeta(
   const data = await graphql<{
     repository:
       | (GqlRepo & {
-          viewerCanPush: boolean
           labels: { nodes: Label[] }
           milestones: { nodes: { number: number; title: string; dueOn: string | null; state: 'OPEN' | 'CLOSED' }[] }
           assignableUsers: { nodes: User[] }
@@ -130,7 +128,6 @@ export async function getRepoMeta(
   if (!r) throw new Error(`${owner}/${name} not found`)
   return {
     ...mapRepo(r),
-    viewerCanPush: r.viewerCanPush,
     labels: r.labels.nodes ?? [],
     milestones: (r.milestones.nodes ?? []).map(mapMilestone).filter((m): m is Milestone => m != null),
     assignableUsers: r.assignableUsers.nodes ?? [],
