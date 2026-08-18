@@ -102,9 +102,14 @@ static host with no rewrite rules.
 - **Root domain** (Netlify, Cloudflare Pages, S3, …): `npm run build`, publish `dist/`.
 - **GitHub Pages subpath**: `BASE_PATH=/<repo>/ npm run build`. The included
   `.github/workflows/deploy-pages.yml` does this automatically on every push to
-  `main`, and can also be run by hand from the Actions tab. One-time setup:
-  set Settings → Pages → Source to **GitHub Actions**. Documentation-only
-  changes are skipped.
+  `main`, and can also be run by hand from the Actions tab. No repository
+  settings need changing first — the job points Pages at the Actions builder
+  itself. Documentation-only changes are skipped.
+
+  If the site ever serves a blank page with the right tab title, Pages has been
+  switched back to "Deploy from a branch": that builder publishes the repo
+  source, whose `index.html` loads `/src/main.tsx` — TypeScript the browser
+  cannot run. Re-running the deploy workflow puts it back.
 
 ## Installing on iOS
 

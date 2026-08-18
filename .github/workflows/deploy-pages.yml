@@ -1,7 +1,8 @@
 # Publishes the app to GitHub Pages on every push to main, and on demand from
 # the Actions tab.
 #
-# Before the first run, set Settings → Pages → Source to "GitHub Actions".
+# No repository settings need touching first — the job points Pages at the
+# Actions builder itself.
 name: Deploy to GitHub Pages
 
 on:
@@ -41,6 +42,21 @@ jobs:
         run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+
+      # Pages defaults to the legacy branch builder, which serves the repo
+      # source — an unbuilt index.html whose only script is /src/main.tsx — so
+      # the site loads blank. configure-pages only sets build_type when it
+      # creates the site, and will not convert an existing branch-built one, so
+      # set it explicitly here. Idempotent: PUT updates, POST creates.
+      - name: Point Pages at the Actions builder
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/pages" --silent 2>/dev/null; then
+            gh api -X PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
+          fi
 
       - uses: actions/configure-pages@v5
 
