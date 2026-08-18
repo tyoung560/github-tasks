@@ -1,11 +1,16 @@
-# Publishes the app to GitHub Pages.
+# Publishes the app to GitHub Pages on every push to main, and on demand from
+# the Actions tab.
 #
-# Run it from the Actions tab. Before the first run, set
-# Settings → Pages → Source to "GitHub Actions". Add a `push` trigger here if
-# you want every commit on the default branch to deploy.
+# Before the first run, set Settings → Pages → Source to "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
+  push:
+    branches: [main]
+    # A README-only change does not alter the bundle, so skip the deploy.
+    paths-ignore:
+      - '**/*.md'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
 
 permissions:

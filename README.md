@@ -101,8 +101,10 @@ static host with no rewrite rules.
 
 - **Root domain** (Netlify, Cloudflare Pages, S3, …): `npm run build`, publish `dist/`.
 - **GitHub Pages subpath**: `BASE_PATH=/<repo>/ npm run build`. The included
-  `.github/workflows/deploy-pages.yml` does this — run it from the Actions tab
-  once Pages is set to "GitHub Actions" in repository settings.
+  `.github/workflows/deploy-pages.yml` does this automatically on every push to
+  `main`, and can also be run by hand from the Actions tab. One-time setup:
+  set Settings → Pages → Source to **GitHub Actions**. Documentation-only
+  changes are skipped.
 
 ## Installing on iOS
 
