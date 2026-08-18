@@ -45,17 +45,38 @@ jobs:
 
       # Pages defaults to the legacy branch builder, which serves the repo
       # source — an unbuilt index.html whose only script is /src/main.tsx — so
-      # the site loads blank. configure-pages only sets build_type when it
-      # creates the site, and will not convert an existing branch-built one, so
-      # set it explicitly here. Idempotent: PUT updates, POST creates.
+      # the site loads blank. configure-pages sets build_type only on the
+      # create path and leaves an existing branch-built site alone, so handle
+      # it here.
+      #
+      # GITHUB_TOKEN may create a Pages site but not reconfigure one that
+      # already exists: the PUT comes back 403 "Resource not accessible by
+      # integration". So creating is reliable, switching is not, and this step
+      # never fails the build — if the switch is refused it prints how to do it
+      # by hand and lets the deploy below report the real error.
       - name: Point Pages at the Actions builder
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh api "repos/$GITHUB_REPOSITORY/pages" --silent 2>/dev/null; then
-            gh api -X PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
-          else
+          build_type=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type 2>/dev/null || echo missing)
+
+          if [ "$build_type" = workflow ]; then
+            echo "Pages already builds from Actions."
+            exit 0
+          fi
+
+          if [ "$build_type" = missing ]; then
             gh api -X POST "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
+            echo "Enabled Pages with the Actions builder."
+            exit 0
+          fi
+
+          if gh api -X PUT "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow 2>/dev/null; then
+            echo "Switched Pages from '$build_type' to the Actions builder."
+          else
+            echo "::warning::Pages source is '$build_type' and GITHUB_TOKEN is not allowed to change it."
+            echo "::warning::Fix once: Settings > Pages > Build and deployment > Source > GitHub Actions."
+            echo "::warning::Or: Source > Deploy from a branch > Branch: None to unpublish, then re-run this workflow and it will recreate the site in Actions mode."
           fi
 
       - uses: actions/configure-pages@v5
