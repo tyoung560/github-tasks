@@ -101,15 +101,20 @@ static host with no rewrite rules.
 
 - **Root domain** (Netlify, Cloudflare Pages, S3, …): `npm run build`, publish `dist/`.
 - **GitHub Pages subpath**: `BASE_PATH=/<repo>/ npm run build`. The included
-  `.github/workflows/deploy-pages.yml` does this automatically on every push to
-  `main`, and can also be run by hand from the Actions tab. No repository
-  settings need changing first — the job points Pages at the Actions builder
-  itself. Documentation-only changes are skipped.
+  `.github/workflows/deploy-pages.yml` does this on every push to `main`, and
+  can also be run by hand from the Actions tab. Documentation-only changes are
+  skipped.
 
-  If the site ever serves a blank page with the right tab title, Pages has been
-  switched back to "Deploy from a branch": that builder publishes the repo
-  source, whose `index.html` loads `/src/main.tsx` — TypeScript the browser
-  cannot run. Re-running the deploy workflow puts it back.
+  Pages must be set to build from **GitHub Actions**, not from a branch. If it
+  has never been enabled the workflow turns it on correctly by itself; if it is
+  already enabled against a branch, `GITHUB_TOKEN` is not permitted to change
+  that, so set it once at Settings → Pages → Build and deployment → Source →
+  **GitHub Actions**. (Selecting Branch: **None** to unpublish also works — the
+  next workflow run then recreates the site in Actions mode.)
+
+  The symptom of getting this wrong is a blank page under the correct tab
+  title: the branch builder publishes the repository source, whose `index.html`
+  loads `/src/main.tsx` — TypeScript no browser can execute.
 
 ## Installing on iOS
 
